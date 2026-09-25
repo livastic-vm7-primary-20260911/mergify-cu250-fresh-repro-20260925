@@ -1,0 +1,19 @@
+name: VM7 pad probe
+on:
+  pull_request:
+    types: [opened, synchronize]
+permissions:
+  contents: write
+jobs:
+  pad:
+    if: startsWith(github.head_ref, 'pad-probe-')
+    runs-on: ubuntu-latest
+    steps:
+      - name: create one GitHub-generated commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          BRANCH: ${{ github.head_ref }}
+        run: |
+          content="$(printf 'pad probe\n' | base64 -w0)"
+          gh api -X PUT "repos/$REPO/contents/pad-probe.txt"             -f message='VM7 pad probe verified commit'             -f content="$content"             -f branch="$BRANCH"
